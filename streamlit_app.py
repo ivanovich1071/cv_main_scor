@@ -1,19 +1,14 @@
 import os
+
 import openai
 import streamlit as st
-from dotenv import load_dotenv
+
 from parse_hh import get_candidate_info, get_job_description
-
-# Загрузите переменные окружения из файла .env
-load_dotenv()
-
-# Убедитесь, что переменная окружения OPENAI_API_KEY установлена
-if "OPENAI_API_KEY" not in os.environ:
-    raise ValueError("OPENAI_API_KEY environment variable is not set")
 
 client = openai.Client(
     api_key=os.getenv("OPENAI_API_KEY")
 )
+
 
 SYSTEM_PROMPT = """
 Проскорь кандидата, насколько он подходит для данной вакансии.
@@ -23,9 +18,10 @@ SYSTEM_PROMPT = """
 Потом представь результат в виде оценки от 1 до 10.
 """.strip()
 
+
 def request_gpt(system_prompt, user_prompt):
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
@@ -34,6 +30,7 @@ def request_gpt(system_prompt, user_prompt):
         temperature=0,
     )
     return response.choices[0].message.content
+
 
 st.title("CV Scoring App")
 
